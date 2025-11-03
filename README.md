@@ -44,5 +44,3 @@ docker-ansible-cli ansible-playbook -u playbook.yml
 ```
 
 To accelerate using Mitogen look into [Using Mitogen](docs/using-mitogen.md).
-
-## Maintainer

@@ -1,5 +1,5 @@
 # pull base image
-FROM alpine:3.22
+FROM docker.io/alpine:3.22
 
 ARG ANSIBLE_CORE_VERSION=2.18.4
 ARG ANSIBLE_VERSION=11.4.0
@@ -22,6 +22,7 @@ RUN apk --no-cache add \
         sshpass \
         openssh-client \
         rsync \
+        jg \
         git && \
     apk --no-cache add --virtual build-dependencies \
         python3-dev \

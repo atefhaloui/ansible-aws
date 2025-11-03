@@ -1,0 +1,63 @@
+name: Build and Push Docker image to GHCR
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ansible-aws
+  ANSIBLE_CORE_VERSION: "2.19.3" # https://pypi.org/project/ansible-core/
+  ANSIBLE_VERSION: "12.1.0"      # https://pypi.org/project/ansible/
+  ANSIBLE_LINT: "25.9.2"         # https://pypi.org/project/ansible-lint/
+  AWS_CLI_VERSION: "2.31.27"     # https://raw.githubusercontent.com/aws/aws-cli/v2/CHANGELOG.rst
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version variables
+        id: vars
+        run: |
+          # Use workflow_dispatch inputs if present, else fallback to Dockerfile parsing or defaults
+          ANSIBLE_CORE_VERSION="${{ github.event.inputs.ANSIBLE_CORE_VERSION || '2.18.4' }}"
+          ANSIBLE_VERSION="${{ github.event.inputs.ANSIBLE_VERSION || '11.4.0' }}"
+          ANSIBLE_LINT="${{ github.event.inputs.ANSIBLE_LINT || '25.2.1' }}"
+          AWS_CLI_VERSION="${{ github.event.inputs.AWS_CLI_VERSION || '2.31.27' }}"
+          echo "ANSIBLE_CORE_VERSION=$ANSIBLE_CORE_VERSION" >> $GITHUB_ENV
+          echo "ANSIBLE_VERSION=$ANSIBLE_VERSION" >> $GITHUB_ENV
+          echo "ANSIBLE_LINT=$ANSIBLE_LINT" >> $GITHUB_ENV
+          echo "AWS_CLI_VERSION" >>  >> $GITHUB_ENV
+          echo "TAG=${ANSIBLE_CORE_VERSION}-alpine-${AWS_CLI_VERSION}" >> $GITHUB_ENV
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            ANSIBLE_CORE_VERSION=${{ env.ANSIBLE_CORE_VERSION }}
+            ANSIBLE_VERSION=${{ env.ANSIBLE_VERSION }}
+            ANSIBLE_LINT=${{ env.ANSIBLE_LINT }}
+            AWS_CLI_VERSION=${{ env.AWS_CLI_VERSION }}

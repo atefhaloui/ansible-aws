@@ -45,7 +45,7 @@ jobs:
           echo "ANSIBLE_CORE_VERSION=$ANSIBLE_CORE_VERSION" >> $GITHUB_ENV
           echo "ANSIBLE_VERSION=$ANSIBLE_VERSION" >> $GITHUB_ENV
           echo "ANSIBLE_LINT=$ANSIBLE_LINT" >> $GITHUB_ENV
-          echo "AWS_CLI_VERSION" >> $GITHUB_ENV
+          echo "AWS_CLI_VERSION=${AWS_CLI_VERSION}" >> $GITHUB_ENV
           echo "TAG=${ANSIBLE_CORE_VERSION}-alpine-${AWS_CLI_VERSION}" >> $GITHUB_ENV
 
       - name: Build and push Docker image

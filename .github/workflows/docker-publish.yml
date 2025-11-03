@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ansible-aws
+  IMAGE_NAME: "ansible-aws"
   ANSIBLE_CORE_VERSION: "2.19.3" # https://pypi.org/project/ansible-core/
   ANSIBLE_VERSION: "12.1.0"      # https://pypi.org/project/ansible/
   ANSIBLE_LINT: "25.9.2"         # https://pypi.org/project/ansible-lint/
@@ -45,7 +45,7 @@ jobs:
           echo "ANSIBLE_CORE_VERSION=$ANSIBLE_CORE_VERSION" >> $GITHUB_ENV
           echo "ANSIBLE_VERSION=$ANSIBLE_VERSION" >> $GITHUB_ENV
           echo "ANSIBLE_LINT=$ANSIBLE_LINT" >> $GITHUB_ENV
-          echo "AWS_CLI_VERSION" >>  >> $GITHUB_ENV
+          echo "AWS_CLI_VERSION" >> $GITHUB_ENV
           echo "TAG=${ANSIBLE_CORE_VERSION}-alpine-${AWS_CLI_VERSION}" >> $GITHUB_ENV
 
       - name: Build and push Docker image
